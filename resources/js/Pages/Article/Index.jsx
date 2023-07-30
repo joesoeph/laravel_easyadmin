@@ -1,11 +1,36 @@
+import PaginationLinkButton from "@/Components/paginationLinkButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
+import { useState } from "react";
+
+function getPage(urlString) {
+    try {
+        const url = new URL(urlString);
+        const params = new URLSearchParams(url.search);
+        return params.get("page");
+    } catch (error) {
+        return null;
+    }
+}
+
+function htmlEntityDecode(inputString) {
+    const parser = new DOMParser();
+    const decodedString = parser.parseFromString(
+        `<!doctype html><body>${inputString}`,
+        "text/html"
+    ).body.textContent;
+    return decodedString;
+}
 
 export default function Index({ auth, articles }) {
+    const [perPage, setPerPage] = useState(15);
+    const optionLimits = [15, 25, 50, 100, 150];
+
     function rows(lists) {
-        return lists.map((list) => {
+        return lists.map((list, index) => {
             return (
                 <tr key={list.id}>
+                    <td>{++index}</td>
                     <td>{list.title}</td>
                     <td>{list.content}</td>
                     <td>{list.user.name}</td>
@@ -45,6 +70,27 @@ export default function Index({ auth, articles }) {
         });
     }
 
+    function pagination(paginationLinks) {
+        return paginationLinks.map((paginationLink) => {
+            return (
+                <PaginationLinkButton
+                    key={paginationLink.label}
+                    disable={paginationLink.url === null}
+                    active={paginationLink.active}
+                    href={route("articles.index", {
+                        page: getPage(paginationLink.url),
+                    })}
+                >
+                    {htmlEntityDecode(paginationLink.label)}
+                </PaginationLinkButton>
+            );
+        });
+    }
+
+    function handleLimitRows(e) {
+        console.log(e.target.value);
+    }
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -60,6 +106,7 @@ export default function Index({ auth, articles }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
+                            {/* Filter (Search, Rows per Page) */}
                             <div className="flex justify-between items-center">
                                 <input
                                     type="text"
@@ -72,18 +119,27 @@ export default function Index({ auth, articles }) {
                                             Rows:
                                         </span>
                                     </label>
-                                    <select className="select w-full max-w-xs">
-                                        <option>25</option>
-                                        <option>50</option>
-                                        <option>100</option>
-                                        <option>150</option>
+                                    <select
+                                        className="select w-full max-w-xs"
+                                        onChange={handleLimitRows}
+                                    >
+                                        {optionLimits.map((limit) => {
+                                            return (
+                                                <option key={limit}>
+                                                    {limit}
+                                                </option>
+                                            );
+                                        })}
                                     </select>
                                 </div>
                             </div>
+                            {/* ./ Filter (Search, Rows per Page) */}
+
                             <div className="overflow-x-auto">
                                 <table className="table table-zebra">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>Title</th>
                                             <th>Content</th>
                                             <th>Writer</th>
@@ -91,11 +147,23 @@ export default function Index({ auth, articles }) {
                                         </tr>
                                     </thead>
                                     <tbody>{rows(articles.data)}</tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Title</th>
+                                            <th>Content</th>
+                                            <th>Writer</th>
+                                            <th></th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
+
+                            {/* Pagination */}
                             <div className="text-center mt-12">
                                 <div className="join">
-                                    <button className="join-item btn">
+                                    {pagination(articles.links)}
+                                    {/* <button className="join-item btn">
                                         First
                                     </button>
                                     <button className="join-item btn">
@@ -119,9 +187,12 @@ export default function Index({ auth, articles }) {
                                     </button>
                                     <button className="join-item btn">
                                         Last
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
+                            {/* ./ Pagination */}
+
+                            <pre>{JSON.stringify(articles, null, 2)}</pre>
                         </div>
                     </div>
                 </div>
