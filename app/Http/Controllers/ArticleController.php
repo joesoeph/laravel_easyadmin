@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ArticleController extends Controller
 {
@@ -13,7 +14,13 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::all();
+
+        $articles = QueryBuilder::for(Article::class)
+            ->allowedFilters(['title', 'content', 'user.name'])
+            ->with('user')
+            ->paginate(request()->query('limit'))
+            ->appends(request()->query());
+            // dd(json_encode($articles, JSON_PRETTY_PRINT));
         return Inertia::render('Article/Index', compact('articles'));
     }
 
