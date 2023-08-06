@@ -1,11 +1,11 @@
 import React from "react";
 
-export default function TFooter({ columns }) {
+export default function TFooter({ dataMapping }) {
     return (
         <thead>
             <tr>
-                {columns.map((column, index) => {
-                    return <th key={index}>{column}</th>;
+                {dataMapping.map((data, index) => {
+                    return <th key={index}>{data.columnName}</th>;
                 })}
             </tr>
         </thead>

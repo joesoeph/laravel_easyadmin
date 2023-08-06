@@ -1,11 +1,11 @@
 import React from "react";
 
-export default function THeader({ columns }) {
+export default function THeader({ dataMapping }) {
     return (
         <thead>
             <tr>
-                {columns.map((column, index) => {
-                    return <th key={index}>{column}</th>;
+                {dataMapping.map((data, index) => {
+                    return <th key={index}>{data.columnName}</th>;
                 })}
             </tr>
         </thead>
