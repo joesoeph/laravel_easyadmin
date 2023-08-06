@@ -8,7 +8,6 @@ import RenderRows from "./RenderRows";
 
 export default function SimpleTable({
     paginationData,
-    columns,
     columnSearch,
     dataMapping,
 }) {
