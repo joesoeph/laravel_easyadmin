@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import SimpleTable from "@/Components/Table/SimpleTable";
 import DropdownActionRow from "@/Components/Table/DropdownActionRow";
 
@@ -17,8 +17,15 @@ export default function Index({ auth, articles }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <Link
+                            href={route("articles.create")}
+                            className="btn btn-neutral"
+                        >
+                            + Create new
+                        </Link>
                         <SimpleTable
+                            className="mt-6 text-gray-900"
                             paginationData={articles}
                             columnSearch="title"
                             dataMapping={[
