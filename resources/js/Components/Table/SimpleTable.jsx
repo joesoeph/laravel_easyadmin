@@ -10,9 +10,10 @@ export default function SimpleTable({
     paginationData,
     columnSearch,
     dataMapping,
+    className,
 }) {
     return (
-        <div className="p-6 text-gray-900">
+        <div className={className}>
             {/* Filter (Search, Rows per Page) */}
             <div className="flex justify-between items-center">
                 <Search columnSearch={columnSearch} />
