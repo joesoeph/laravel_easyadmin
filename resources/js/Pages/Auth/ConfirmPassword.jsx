@@ -29,7 +29,12 @@ export default function ConfirmPassword() {
                 password before continuing.
             </Text>
 
-            <Form layout="vertical" onFinish={onFinish} autoComplete="off">
+            <Form
+                layout="vertical"
+                onFinish={onFinish}
+                autoComplete="off"
+                className="tw-mt-6"
+            >
                 <Form.Item
                     label="Password"
                     name="password"

@@ -29,7 +29,12 @@ export default function ForgotPassword({ status }) {
                 </div>
             )}
 
-            <Form layout="vertical" onFinish={onFinish} autoComplete="off">
+            <Form
+                layout="vertical"
+                onFinish={onFinish}
+                autoComplete="off"
+                className="tw-mt-6"
+            >
                 <Form.Item
                     label="Email"
                     name="email"

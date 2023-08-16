@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, useForm } from "@inertiajs/react";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Alert, Button, Checkbox, Form, Input } from "antd";
 import ButtonLink from "@/Components/Table/ButtonLink";
 
 export default function Login({ status, canResetPassword }) {
@@ -27,12 +27,17 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Log in" />
 
             {status && (
-                <div className="tw-mb-4 tw-font-medium tw-text-sm tw-text-green-600">
-                    {status}
+                <div className="tw-my-6">
+                    <Alert message={status} type="success" />
                 </div>
             )}
 
-            <Form layout="vertical" onFinish={onFinish} autoComplete="off">
+            <Form
+                layout="vertical"
+                onFinish={onFinish}
+                autoComplete="off"
+                className="tw-mt-6"
+            >
                 <Form.Item
                     label="Email"
                     name="email"
