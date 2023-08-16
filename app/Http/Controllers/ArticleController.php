@@ -29,7 +29,8 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        $title = 'Create Article';
+        return Inertia::render('Article/Form', compact('title'));
     }
 
     /**
