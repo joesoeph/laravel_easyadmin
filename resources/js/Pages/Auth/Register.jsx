@@ -1,117 +1,104 @@
-import { useEffect } from 'react';
-import GuestLayout from '@/Layouts/GuestLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { useEffect } from "react";
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, useForm } from "@inertiajs/react";
+import { Button, Form, Input } from "antd";
+import ButtonLink from "@/Components/Table/ButtonLink";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
     });
 
     useEffect(() => {
         return () => {
-            reset('password', 'password_confirmation');
+            reset("password", "password_confirmation");
         };
     }, []);
 
-    const submit = (e) => {
-        e.preventDefault();
-
-        post(route('register'));
+    // submit form
+    const onFinish = (values) => {
+        post(route("register"));
     };
 
     return (
         <GuestLayout>
             <Head title="Register" />
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
-                        id="name"
-                        name="name"
+            <Form layout="vertical" onFinish={onFinish} autoComplete="off">
+                <Form.Item
+                    label="Name"
+                    name="name"
+                    required
+                    validateStatus={errors.name ? "error" : ""}
+                    help={errors.name ? errors.name : ""}
+                >
+                    <Input
                         value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
+                        onChange={(e) => setData("name", e.target.value)}
                     />
+                </Form.Item>
 
-                    <InputError message={errors.name} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
+                <Form.Item
+                    label="Email"
+                    name="email"
+                    required
+                    validateStatus={errors.email ? "error" : ""}
+                    help={errors.email ? errors.email : ""}
+                >
+                    <Input
                         value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
+                        onChange={(e) => setData("email", e.target.value)}
                     />
+                </Form.Item>
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
+                <Form.Item
+                    label="Password"
+                    name="password"
+                    required
+                    validateStatus={errors.password ? "error" : ""}
+                    help={errors.password ? errors.password : ""}
+                >
+                    <Input.Password
                         value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
+                        onChange={(e) => setData("password", e.target.value)}
                     />
+                </Form.Item>
 
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
+                <Form.Item
+                    label="Password Confirmation"
+                    name="password_confirmation"
+                    required
+                    validateStatus={errors.password_confirmation ? "error" : ""}
+                    help={
+                        errors.password_confirmation
+                            ? errors.password_confirmation
+                            : ""
+                    }
+                >
+                    <Input.Password
                         value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        required
+                        onChange={(e) =>
+                            setData("password_confirmation", e.target.value)
+                        }
                     />
+                </Form.Item>
 
-                    <InputError message={errors.password_confirmation} className="mt-2" />
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <Link
-                        href={route('login')}
-                        className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                <Form.Item>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={processing}
                     >
-                        Already registered?
-                    </Link>
-
-                    <PrimaryButton className="ml-4" disabled={processing}>
                         Register
-                    </PrimaryButton>
-                </div>
-            </form>
+                    </Button>
+                    <ButtonLink href={route("login")}>
+                        Already registered?
+                    </ButtonLink>
+                </Form.Item>
+            </Form>
         </GuestLayout>
     );
 }
