@@ -36,7 +36,7 @@ export default function Login({ status, canResetPassword }) {
                 layout="vertical"
                 onFinish={onFinish}
                 autoComplete="off"
-                className="tw-mt-6"
+                className="tw-flex tw-flex-col tw-content-between tw-gap-2"
             >
                 <Form.Item
                     label="Email"

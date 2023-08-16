@@ -27,7 +27,12 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
-            <Form layout="vertical" onFinish={onFinish} autoComplete="off">
+            <Form
+                layout="vertical"
+                onFinish={onFinish}
+                autoComplete="off"
+                className="tw-flex tw-flex-col tw-content-between tw-gap-2"
+            >
                 <Form.Item
                     label="Name"
                     name="name"

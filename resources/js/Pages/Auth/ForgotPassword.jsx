@@ -33,7 +33,7 @@ export default function ForgotPassword({ status }) {
                 layout="vertical"
                 onFinish={onFinish}
                 autoComplete="off"
-                className="tw-mt-6"
+                className="tw-flex tw-flex-col tw-content-between tw-gap-2 tw-mt-6"
             >
                 <Form.Item
                     label="Email"
