@@ -1,9 +1,28 @@
 import { useState } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
+import ButtonLink from "@/Components/Table/ButtonLink";
+import { Button, Dropdown, Space } from "antd";
+import { DownOutlined, MenuOutlined } from "@ant-design/icons";
+
+const items = [
+    {
+        label: (
+            <ButtonLink type="ghost" href={route("profile.edit")}>
+                Profile
+            </ButtonLink>
+        ),
+        key: "0",
+    },
+    {
+        label: (
+            <ButtonLink type="ghost" href={route("logout")} method="post">
+                Log out
+            </ButtonLink>
+        ),
+        key: "1",
+    },
+];
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
@@ -21,69 +40,46 @@ export default function Authenticated({ user, header, children }) {
                                 </Link>
                             </div>
 
-                            <div className="tw-hidden tw-space-x-8 sm:-tw-my-px sm:tw-ml-10 sm:tw-flex">
-                                <NavLink
+                            <div className="tw-hidden tw-space-x-2 sm:-tw-my-px sm:tw-ml-10 sm:tw-flex sm:tw-items-center">
+                                <ButtonLink
                                     href={route("dashboard")}
-                                    active={route().current("dashboard")}
+                                    disabled={route().current("dashboard")}
                                 >
                                     Dashboard
-                                </NavLink>
-                                <NavLink
+                                </ButtonLink>
+                                <ButtonLink
                                     href={route("articles.index")}
-                                    active={route().current("articles.index")}
+                                    disabled={route().current("articles.index")}
                                 >
                                     Articles
-                                </NavLink>
+                                </ButtonLink>
                             </div>
                         </div>
 
                         <div className="tw-hidden sm:tw-flex sm:tw-items-center sm:tw-ml-6">
                             <div className="tw-ml-3 tw-relative">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="tw-inline-flex tw-rounded-md">
-                                            <button
-                                                type="button"
-                                                className="tw-inline-flex tw-items-center tw-px-3 tw-py-2 tw-border tw-border-transparent tw-text-sm tw-leading-4 tw-font-medium tw-rounded-md tw-text-gray-500 tw-bg-white hover:tw-text-gray-700 focus:tw-outline-none tw-transition tw-ease-in-out tw-duration-150"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="tw-ml-2 -tw-mr-0.5 tw-h-4 tw-w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route("profile.edit")}
-                                        >
-                                            Profile
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route("logout")}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
+                                <Dropdown
+                                    menu={{
+                                        items,
+                                    }}
+                                    trigger={["click"]}
+                                >
+                                    <Button
+                                        type="ghost"
+                                        onClick={(e) => e.preventDefault()}
+                                    >
+                                        <Space>
+                                            {user.name}
+                                            <DownOutlined />
+                                        </Space>
+                                    </Button>
                                 </Dropdown>
                             </div>
                         </div>
 
                         <div className="-tw-mr-2 tw-flex tw-items-center sm:tw-hidden">
-                            <button
+                            <Button
+                                type="ghost"
                                 onClick={() =>
                                     setShowingNavigationDropdown(
                                         (previousState) => !previousState
@@ -91,36 +87,8 @@ export default function Authenticated({ user, header, children }) {
                                 }
                                 className="tw-inline-flex tw-items-center tw-justify-center tw-p-2 tw-rounded-md tw-text-gray-400 hover:tw-text-gray-500 hover:tw-bg-gray-100 focus:tw-outline-none focus:tw-bg-gray-100 focus:tw-text-gray-500 tw-transition tw-duration-150 tw-ease-in-out"
                             >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? "tw-inline-flex"
-                                                : "tw-hidden"
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? "tw-inline-flex"
-                                                : "tw-hidden"
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
+                                <MenuOutlined />
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -131,19 +99,19 @@ export default function Authenticated({ user, header, children }) {
                         " sm:tw-hidden"
                     }
                 >
-                    <div className="tw-pt-2 tw-pb-3 tw-space-y-1">
-                        <ResponsiveNavLink
+                    <div className="tw-pt-2 tw-pb-3 tw-space-y-1 tw-flex tw-flex-col tw-items-start">
+                        <ButtonLink
                             href={route("dashboard")}
-                            active={route().current("dashboard")}
+                            disabled={route().current("dashboard")}
                         >
                             Dashboard
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
+                        </ButtonLink>
+                        <ButtonLink
                             href={route("articles.index")}
-                            active={route().current("articles.index")}
+                            disabled={route().current("articles.index")}
                         >
                             Articles
-                        </ResponsiveNavLink>
+                        </ButtonLink>
                     </div>
 
                     <div className="tw-pt-4 tw-pb-1 tw-border-t tw-border-gray-200">
@@ -157,16 +125,19 @@ export default function Authenticated({ user, header, children }) {
                         </div>
 
                         <div className="tw-mt-3 tw-space-y-1">
-                            <ResponsiveNavLink href={route("profile.edit")}>
+                            <ButtonLink
+                                href={route("profile.edit")}
+                                disabled={route().current("profile.edit")}
+                            >
                                 Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
+                            </ButtonLink>
+                            <ButtonLink
                                 method="post"
                                 href={route("logout")}
-                                as="button"
+                                disabled={route().current("logout")}
                             >
                                 Log Out
-                            </ResponsiveNavLink>
+                            </ButtonLink>
                         </div>
                     </div>
                 </div>
