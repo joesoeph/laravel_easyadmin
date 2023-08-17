@@ -10,11 +10,10 @@ use Spatie\QueryBuilder\QueryBuilder;
 class ArticleController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource
      */
     public function index()
     {
-
         $articles = QueryBuilder::for(Article::class)
             ->allowedFilters(['title', 'content', 'user.name'])
             ->with('user')
@@ -22,6 +21,21 @@ class ArticleController extends Controller
             ->appends(request()->query());
             // dd(json_encode($articles, JSON_PRETTY_PRINT));
         return Inertia::render('Article/Index', compact('articles'));
+    }
+
+    /*
+    * Display pagination resource JSON
+    */
+    public function list()
+    {
+        $articles = QueryBuilder::for(Article::class)
+            ->allowedFilters(['title', 'content', 'user.name'])
+            ->with('user')
+            ->allowedSorts('title', 'content')
+            ->paginate(request()->query('limit'))
+            ->appends(request()->query());
+
+        return response()->json($articles);
     }
 
     /**
