@@ -1,103 +1,112 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Link, useForm, usePage } from '@inertiajs/react';
-import { Transition } from '@headlessui/react';
+import { useForm, usePage } from "@inertiajs/react";
+import { Alert, Button, Form, Input, message } from "antd";
+import { useEffect } from "react";
 
-export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
+export default function UpdateProfileInformation({
+    mustVerifyEmail,
+    status,
+    className = "",
+}) {
     const user = usePage().props.auth.user;
+    const [messageApi, contextHolder] = message.useMessage();
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
-        name: user.name,
-        email: user.email,
-    });
+    const { data, setData, patch, errors, processing, recentlySuccessful } =
+        useForm({
+            name: user.name,
+            email: user.email,
+        });
 
-    const submit = (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (recentlySuccessful) {
+            messageApi.success("Saved");
+        }
+    }, [recentlySuccessful]);
 
-        patch(route('profile.update'));
+    const onFinish = () => {
+        patch(route("profile.update"));
     };
 
     return (
         <section className={className}>
+            {contextHolder}
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                    Profile Information
+                </h2>
 
                 <p className="mt-1 text-sm text-gray-600">
                     Update your account's profile information and email address.
                 </p>
             </header>
 
-            <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
-                        id="name"
-                        className="mt-1 block w-full"
+            <Form
+                layout="vertical"
+                onFinish={onFinish}
+                autoComplete="off"
+                className="tw-flex tw-flex-col tw-content-between tw-gap-2"
+            >
+                <Form.Item
+                    label="Name"
+                    name="name"
+                    required
+                    validateStatus={errors.name ? "error" : ""}
+                    help={errors.name ? errors.name : ""}
+                    initialValue={data.name}
+                >
+                    <Input
                         value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                        isFocused
-                        autoComplete="name"
+                        onChange={(e) => setData("name", e.target.value)}
                     />
+                </Form.Item>
 
-                    <InputError className="mt-2" message={errors.name} />
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        className="mt-1 block w-full"
+                <Form.Item
+                    label="Email"
+                    name="email"
+                    required
+                    validateStatus={errors.email ? "error" : ""}
+                    help={errors.email ? errors.email : ""}
+                    initialValue={data.email}
+                >
+                    <Input
                         value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                        autoComplete="username"
+                        onChange={(e) => setData("email", e.target.value)}
                     />
-
-                    <InputError className="mt-2" message={errors.email} />
-                </div>
+                </Form.Item>
 
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
-                        <p className="text-sm mt-2 text-gray-800">
+                        <p className="tw-text-sm tw-mt-2 tw-text-gray-800">
                             Your email address is unverified.
-                            <Link
-                                href={route('verification.send')}
+                            <ButtonLink
+                                type="link"
+                                href={route("verification.send")}
                                 method="post"
-                                as="button"
-                                className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
                                 Click here to re-send the verification email.
-                            </Link>
+                            </ButtonLink>
                         </p>
 
-                        {status === 'verification-link-sent' && (
-                            <div className="mt-2 font-medium text-sm text-green-600">
-                                A new verification link has been sent to your email address.
-                            </div>
+                        {status === "verification-link-sent" && (
+                            <Alert
+                                message="
+                                A new verification link has been sent to your
+                                email address."
+                                type="success"
+                            />
                         )}
                     </div>
                 )}
 
-                <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
-
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
+                <Form.Item>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={processing}
                     >
-                        <p className="text-sm text-gray-600">Saved.</p>
-                    </Transition>
-                </div>
-            </form>
+                        Save
+                    </Button>
+                </Form.Item>
+            </Form>
         </section>
     );
 }
