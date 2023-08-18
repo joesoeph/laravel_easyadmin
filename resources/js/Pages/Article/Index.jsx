@@ -1,10 +1,11 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
 import ButtonLink from "@/Components/Table/ButtonLink";
-import { Button, Dropdown, Space, Table } from "antd";
+import { Button, Dropdown, Input, Space, Table } from "antd";
 import { useEffect, useState } from "react";
 import QueryString from "qs";
 import { MoreOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { debounce } from "lodash";
 
 const items = [
     {
@@ -38,6 +39,13 @@ const columns = [
         title: "Content",
         dataIndex: "content",
         sorter: true,
+    },
+    {
+        title: "Writer",
+        dataIndex: "writer",
+        render: (text, record, index) => {
+            return `${record.user.name}`;
+        },
     },
     {
         title: "Action",
@@ -88,6 +96,7 @@ const getTableParams = (params) => {
 export default function Index({ auth }) {
     const [data, setData] = useState();
     const [loading, setLoading] = useState(false);
+    const [search, setSearch] = useState();
     const [tableParams, setTableParams] = useState({
         pagination: {
             current: 1,
@@ -95,13 +104,20 @@ export default function Index({ auth }) {
         },
     });
 
+    const getQueryString = () => {
+        let result = "";
+        result += `${QueryString.stringify(getTableParams(tableParams))}`;
+
+        if (search !== "" || search !== null) {
+            result += `&${QueryString.stringify({ search })}`;
+        }
+
+        return result;
+    };
+
     const fetchData = () => {
         setLoading(true);
-        fetch(
-            `http://127.0.0.1:8000/articles/list?${QueryString.stringify(
-                getTableParams(tableParams)
-            )}`
-        )
+        fetch(`http://127.0.0.1:8000/articles/list?${getQueryString()}`)
             .then((response) => response.json())
             .then((payload) => {
                 setData(payload.data);
@@ -120,7 +136,7 @@ export default function Index({ auth }) {
 
     useEffect(() => {
         fetchData();
-    }, [JSON.stringify(tableParams)]);
+    }, [JSON.stringify(tableParams), search]);
 
     const handleTableChange = (pagination, filters, sorter) => {
         setTableParams({
@@ -134,6 +150,10 @@ export default function Index({ auth }) {
             setData([]);
         }
     };
+
+    const handleSearch = debounce((e) => {
+        setSearch(e.target.value);
+    }, 1000);
 
     return (
         <AuthenticatedLayout
@@ -157,6 +177,14 @@ export default function Index({ auth }) {
                                 + Create new
                             </ButtonLink>
                         </div>
+                        <Input
+                            placeholder="Search..."
+                            size="large"
+                            defaultValue={search}
+                            onChange={handleSearch}
+                            className="tw-mt-6"
+                            allowClear
+                        />
                         <Table
                             columns={columns}
                             dataSource={data}
