@@ -130,7 +130,7 @@ export default function List() {
     const fetchData = () => {
         setLoading(true);
         axios
-            .get(`http://127.0.0.1:8000/articles/list?${getQueryString()}`)
+            .get(`/articles/list?${getQueryString()}`)
             .then((response) => response.data)
             .then((payload) => {
                 setData(payload.data);
@@ -195,7 +195,7 @@ export default function List() {
                 onOk={() => {
                     axios
                         .delete(
-                            `http://127.0.0.1:8000/articles/${modalDeleteConfirmation?.record?.id}`
+                            `/articles/${modalDeleteConfirmation?.record?.id}`
                         )
                         .then((response) => response.data)
                         .then((payload) => {
