@@ -1,8 +1,7 @@
-import { Button, Dropdown, Input, Modal, Space, Table, message } from "antd";
+import { Button, Dropdown, Modal, Space, Table, message } from "antd";
 import { useEffect, useState } from "react";
 import QueryString from "qs";
 import { MoreOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { debounce } from "lodash";
 import axios from "axios";
 import { router } from "@inertiajs/react";
 
@@ -46,7 +45,6 @@ const getTableParams = (params) => {
 export default function List() {
     const [data, setData] = useState();
     const [loading, setLoading] = useState(false);
-    const [search, setSearch] = useState();
     const [modalDeleteConfirmation, setModalDeleteConfirmation] = useState({
         isShowModal: false,
         record: null,
@@ -120,10 +118,6 @@ export default function List() {
         let result = "";
         result += `${QueryString.stringify(getTableParams(tableParams))}`;
 
-        if (search !== "" || search !== null) {
-            result += `&${QueryString.stringify({ search })}`;
-        }
-
         return result;
     };
 
@@ -155,7 +149,7 @@ export default function List() {
 
     useEffect(() => {
         fetchData();
-    }, [JSON.stringify(tableParams), search]);
+    }, [JSON.stringify(tableParams)]);
 
     const handleTableChange = (pagination, filters, sorter) => {
         setTableParams({
@@ -169,10 +163,6 @@ export default function List() {
             setData([]);
         }
     };
-
-    const handleSearch = debounce((e) => {
-        setSearch(e.target.value);
-    }, 1000);
 
     return (
         <>
@@ -225,14 +215,6 @@ export default function List() {
                 </p>
             </Modal>
 
-            <Input
-                placeholder="Search..."
-                size="large"
-                defaultValue={search}
-                onChange={handleSearch}
-                className="tw-mt-6"
-                allowClear
-            />
             <Table
                 columns={columns}
                 dataSource={data}
