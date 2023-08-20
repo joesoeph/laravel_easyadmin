@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -12,15 +13,9 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource
      */
-    public function index()
+    public function index(Request $request)
     {
-        $articles = QueryBuilder::for(Article::class)
-            ->allowedFilters(['title', 'content', 'user.name'])
-            ->with('user')
-            ->paginate(request()->query('limit'))
-            ->appends(request()->query());
-            // dd(json_encode($articles, JSON_PRETTY_PRINT));
-        return Inertia::render('Article/Index', compact('articles'));
+        return Inertia::render('Article/Index');
     }
 
     /*
@@ -82,8 +77,22 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Article $article)
+    public function destroy($articleId, Request $request)
     {
-        //
+        try {
+            $article = Article::findOrFail($articleId);
+
+            $article->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Your article was deleted'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }
