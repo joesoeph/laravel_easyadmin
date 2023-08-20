@@ -6,6 +6,7 @@ use App\Http\Requests\ArticleRequest;
 use App\Models\Article;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -28,6 +29,7 @@ class ArticleController extends Controller
             ->allowedFilters(['title', 'content', 'user.name'])
             ->with('user')
             ->allowedSorts('title', 'content')
+            ->whereHas('user', fn ($query) => $query->where('id', Auth::id()))
             ->paginate(request()->query('limit'))
             ->appends(request()->query());
 
