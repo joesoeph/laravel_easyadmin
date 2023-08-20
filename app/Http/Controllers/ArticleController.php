@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ArticleRequest;
 use App\Models\Article;
 use Exception;
 use Illuminate\Http\Request;
@@ -38,16 +39,36 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        $title = 'Create Article';
-        return Inertia::render('Article/Form', compact('title'));
+        $pageTitle = 'Create Article';
+        $formPayload = [
+            'type' => 'create',
+            'action' => 'articles.store',
+            'data' => [],
+            'submitLabel' => 'Save' 
+        ];
+        return Inertia::render('Article/FormInput', compact('pageTitle', 'formPayload'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        $validatedData['title'] = $request->title;
+        $validatedData['content'] = $request->content;
+        $validatedData['user_id'] = $request->user()->id;
+
+        $article = new Article();
+        $article->fill($validatedData);
+        
+        $article->save();
+
+        return to_route('articles.index')->with('flash', [
+            'status' => 'success',
+            'message' => 'Your article was saved'
+        ]);
     }
 
     /**
@@ -55,7 +76,8 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
+        $title = 'Edit Article';
+        return Inertia::render('Article/FormInput', compact('title'));
     }
 
     /**
@@ -63,15 +85,32 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        //
+        $pageTitle = 'Edit Article';
+        $formPayload = [
+            'type' => 'edit',
+            'action' => 'articles.update',
+            'data' => $article,
+            'submitLabel' => 'Update' 
+        ];
+        return Inertia::render('Article/FormInput', compact('pageTitle', 'formPayload'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Article $article)
+    public function update(ArticleRequest $request, Article $article)
     {
-        //
+        $validatedData = $request->validated();
+
+        $validatedData['title'] = $request->title;
+        $validatedData['content'] = $request->content;
+
+        $article->update($validatedData);
+
+        return to_route('articles.index')->with('flash', [
+            'status' => 'success',
+            'message' => 'Your article was updated'
+        ]);
     }
 
     /**

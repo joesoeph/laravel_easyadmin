@@ -4,6 +4,7 @@ import QueryString from "qs";
 import { MoreOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { debounce } from "lodash";
 import axios from "axios";
+import { router } from "@inertiajs/react";
 
 const items = [
     {
@@ -88,6 +89,11 @@ export default function List() {
                                 switch (key) {
                                     case "edit":
                                         console.log(key, record.id);
+                                        router.get(
+                                            route("articles.edit", {
+                                                id: record.id,
+                                            })
+                                        );
                                         break;
 
                                     default:
